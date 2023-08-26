@@ -1,82 +1,92 @@
 #include <iostream>
+#include <unordered_map>
+
 using namespace std;
 
-struct Node
+struct Node 
+{ 
+    int data; 
+    Node *next,*random; 
+    Node(int x) 
+    { 
+        data = x; 
+        next = random = NULL; 
+    } 
+}; 
+
+void print(Node *start) 
+{ 
+    Node *ptr = start; 
+    while (ptr) 
+    { 
+        cout << "Data = " << ptr->data << ", Random  = "<< ptr->random->data << endl; 
+        ptr = ptr->next; 
+    } 
+}
+
+Node* clone(Node* head)
 {
-    int data;
+    //Takes Extra space O(n);
+    // unordered_map<Node*, Node*> mp;
 
-    Node* next;
-
-    Node(int x)
-    {
-        data = x;
-        next = NULL;
-    }
-};
-
-Node* delHead(Node* head)
-{
-    if(head == NULL)
-        return NULL;
+    // for(Node* curr = head; curr != NULL; curr = curr -> next)
+    //     mp[curr] = new Node(curr -> data);
     
-    if(head -> next == NULL)
+    // for(Node* curr = head; curr != NULL; curr = curr -> next)
+    // {
+    //     mp[curr] -> next = mp[curr -> next];
+    //     mp[curr] -> random =  mp[curr -> random];
+    // }
+
+    // Node* head2 = mp[head];
+
+    // return head;
+
+    Node* curr = head;
+
+    while(curr != NULL)     //Cloning the data of the linked list
     {
-        delete head;
-        return NULL;
+        Node* next = curr -> next;
+        curr -> next = new Node(curr -> data);
+        curr -> next -> next = next;
+        curr = next;
     }
 
-    head -> data = head -> next -> data;
-    Node* temp = head -> next;
-
-    head -> next = head -> next -> next;
-    delete temp;
-
-    return head;
-}
-
-Node* delKth(Node* head, int k)
-{
-    if(head == NULL)
-        return head;
+    for(Node* curr = head; curr != NULL; curr = curr -> next)
+        curr -> next -> random = curr -> random == NULL ? NULL : curr -> random -> next;
     
-    if(k == 1)
+    Node* h2 = head -> next;
+    Node* copy = h2;
+
+    for(Node* curr = head; curr != NULL; curr = curr -> next)
     {
-        return delHead(head);
+        curr -> next = curr -> next -> next;
+        copy -> next = copy -> next ? copy -> next -> next : NULL;
+        copy = copy -> next;
     }
+    return h2;
+}
 
-    Node *curr = head;
-
-    for(int i = 0; i < k-2; i++)
-        curr = curr -> next;
+int main() 
+{ 
+	Node* head = new Node(10); 
+    head->next = new Node(5); 
+    head->next->next = new Node(20); 
+    head->next->next->next = new Node(15); 
+    head->next->next->next->next = new Node(20); 
     
-    Node* temp = curr -> next;
-    curr -> next = curr -> next -> next;
-    delete temp;
+    head->random = head->next->next;
+    head->next->random=head->next->next->next;
+    head->next->next->random=head;
+    head->next->next->next->random=head->next->next;
+    head->next->next->next->next->random=head->next->next->next;
 
-    return head;
-}
-
-void printlist(Node *head)
-{
-    if(head==NULL)return;
-
-    Node *p=head;
-
-    do
-    {
-        cout<<p->data<<" ";
-        p=p->next;
-    }while(p!=head);
-}
-
-int main()
-{
-    Node* head = new Node(5);
-    head -> next = new Node(10);
-    head -> next -> next = new Node(15);
-    head -> next -> next -> next = new Node(20);
-
-    head = delKth(head, 3);
-
-    printlist(head);
-}
+    cout << "Original list : \n"; 
+    print(head); 
+    
+    cout << "\nCloned list : \n"; 
+    Node *cloned_list = clone(head); 
+    print(cloned_list); 
+  
+    return 0; 
+} 

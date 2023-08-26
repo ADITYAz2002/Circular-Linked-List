@@ -26,20 +26,45 @@ void print(Node *start)
 
 Node* clone(Node* head)
 {
-    unordered_map<Node*, Node*> mp;
+    //Takes Extra space O(n);
+    // unordered_map<Node*, Node*> mp;
 
-    for(Node* curr = head; curr != NULL; curr = curr -> next)
-        mp[curr] = new Node(curr -> data);
+    // for(Node* curr = head; curr != NULL; curr = curr -> next)
+    //     mp[curr] = new Node(curr -> data);
     
-    for(Node* curr = head; curr != NULL; curr = curr -> next)
+    // for(Node* curr = head; curr != NULL; curr = curr -> next)
+    // {
+    //     mp[curr] -> next = mp[curr -> next];
+    //     mp[curr] -> random =  mp[curr -> random];
+    // }
+
+    // Node* head2 = mp[head];
+
+    // return head;
+
+    Node* curr = head;
+
+    while(curr != NULL)
     {
-        mp[curr] -> next = mp[curr -> next];
-        mp[curr] -> random =  mp[curr -> random];
+        Node* next = curr->next;
+        curr->next = new Node(curr->data);
+        curr->next->next = next;
+        curr = next;
     }
 
-    Node* head2 = mp[head];
+    for(Node* curr = head; curr != NULL; curr = curr->next)
+        curr->next->random = curr->random == NULL ? NULL : curr->random->next;
+    
+    Node* h2 = head->next;
+    Node* copy = h2;
 
-    return head;
+    for(Node* curr = head; curr != NULL; curr = curr->next)
+    {
+        curr->next = curr->next->next;
+        copy->next = copy->next ? copy->next->next : NULL;
+        copy = copy->next;
+    }
+    return h2;
 }
 
 int main() 
