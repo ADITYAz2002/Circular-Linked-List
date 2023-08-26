@@ -43,28 +43,37 @@ Node* clone(Node* head)
     // return head;
 
     Node* curr = head;
-
-    while(curr != NULL)
-    {
-        Node* next = curr->next;
-        curr->next = new Node(curr->data);
-        curr->next->next = next;
-        curr = next;
-    }
-
-    for(Node* curr = head; curr != NULL; curr = curr->next)
-        curr->next->random = curr->random == NULL ? NULL : curr->random->next;
-    
-    Node* h2 = head->next;
-    Node* copy = h2;
-
-    for(Node* curr = head; curr != NULL; curr = curr->next)
-    {
-        curr->next = curr->next->next;
-        copy->next = copy->next ? copy->next->next : NULL;
-        copy = copy->next;
-    }
-    return h2;
+        
+        if(!head)
+            return NULL;
+        
+        while(curr != NULL)
+        {
+            Node* copy = new Node(curr -> data);
+            copy -> next = curr -> next;
+            curr -> next = copy;
+            curr = copy -> next;
+        }
+        
+        curr = head;
+        
+        for(Node* curr = head; curr != NULL; curr = curr -> next -> next)
+            if (curr->random != NULL)
+                curr->next->random = curr->random->next;
+             
+        curr = head;   
+        Node* h2 = head -> next;
+        
+        for(Node* curr = head; curr != NULL; curr = curr -> next)
+        {
+            Node* copy = curr -> next;
+            curr -> next = copy -> next;
+            
+            if(copy -> next != NULL)
+                copy -> next = copy -> next -> next;
+        }
+        
+        return h2;
 }
 
 int main() 
